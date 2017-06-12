@@ -26,14 +26,19 @@ Public Class DocForm
     ' TODO - check if file exists and save existing file without the dialog if possible
     '   Implement a save as for saving to a different file
     Private Sub SaveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveToolStripMenuItem.Click, SaveToolStripButton.Click
-        Dim dialog As New SaveFileDialog()
-        dialog.Filter = "Rich text files|*.rtf"
-        dialog.AddExtension = True
-        Dim result = dialog.ShowDialog()
+        Dim existingFile As New System.IO.FileInfo(Me.Text)
+        If (existingFile.Exists) Then
+            Me.DocumentTextBox.SaveFile(Me.Text)
+        Else
+            Dim dialog As New SaveFileDialog()
+            dialog.Filter = "Rich text files|*.rtf"
+            dialog.AddExtension = True
+            Dim result = dialog.ShowDialog()
 
-        If result = Forms.DialogResult.OK Then
-            Me.DocumentTextBox.SaveFile(dialog.FileName)
-            Me.Text = dialog.FileName
+            If result = Forms.DialogResult.OK Then
+                Me.DocumentTextBox.SaveFile(dialog.FileName)
+                Me.Text = dialog.FileName
+            End If
         End If
 
     End Sub
