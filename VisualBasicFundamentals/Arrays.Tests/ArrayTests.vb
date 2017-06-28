@@ -58,8 +58,47 @@ Public Class ArrayTests
     Public Sub TestMultiDimenstionalArray()
         ' Test 1 - assert that all dimensions have the same length
         Dim numbers = {{1, 2}, {3, 4}, {5, 6}}
-        Assert.That(numbers.GetLength(0), [Is].EqualTo(numbers.GetLength(1)))
-        Assert.That(numbers.GetLength(0), [Is].EqualTo(numbers.GetLength(2)))
-
+        Assert.That(numbers.GetLength(0), [Is].EqualTo(numbers.GetLength(0)))
+        Assert.That(numbers.GetLength(1), [Is].EqualTo(numbers.GetLength(1)))
+        Assert.That(numbers(1, 1), [Is].EqualTo(4))
+        Assert.That(numbers.Rank, [Is].EqualTo(2))
     End Sub
+    <Test()>
+    Public Sub TestArrayBounds()
+        ' Assert that the array size is specified as an upper bound, not as a length
+        Dim upper As Integer = 10
+        Dim numbers(upper) As Integer
+        Assert.That(numbers.GetLength(0), [Is].EqualTo(upper + 1))
+        Assert.That(numbers.GetUpperBound(0), [Is].EqualTo(upper))
+        Assert.That(numbers.Rank, [Is].EqualTo(1))
+    End Sub
+
+    <Test()>
+    Public Sub TestArrayResize()
+        ' Assert that the array size is specified as an upper bound, not as a length
+        Dim upper As Integer = 10
+        Dim changedUpper = upper + 5
+        Dim numbers(upper) As Integer
+        Assert.That(numbers.GetUpperBound(0), [Is].EqualTo(upper))
+        For i = 0 To upper
+            numbers(i) = i ^ 2
+        Next
+        Assert.That(numbers(4), [Is].EqualTo(16)) ' content should be the index ^ 2
+        Assert.That(numbers(10), [Is].EqualTo(100)) ' content should be the index ^ 2
+
+        ' resize the array, preserving the values
+        ReDim Preserve numbers(changedUpper)
+        Assert.That(numbers.GetUpperBound(0), [Is].EqualTo(changedUpper))
+        Assert.That(numbers(4), [Is].EqualTo(16)) ' content should be the index ^ 2
+        Assert.That(numbers(10), [Is].EqualTo(100)) ' content should be the index ^ 2
+
+        ' resize the array, not preserving the values
+        ' default initial value for numeric types is 0
+        ' https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/dim-statement
+        ReDim numbers(upper)
+        Assert.That(numbers.GetUpperBound(0), [Is].EqualTo(upper))
+        Assert.That(numbers(4), [Is].EqualTo(0)) ' content should be the index ^ 2
+        Assert.That(numbers(10), [Is].EqualTo(0)) ' content should be the index ^ 2
+    End Sub
+
 End Class
